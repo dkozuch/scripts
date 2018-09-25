@@ -25,7 +25,5 @@ def make_colvar(i):
 	
 inputs = range(0,nsims)
 Parallel(n_jobs=nsims)(delayed(make_colvar)(i) for i in inputs)
-#for i in range(0,28):
-#	make_colvar(i)	
 	
 	

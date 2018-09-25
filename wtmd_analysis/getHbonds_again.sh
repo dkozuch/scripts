@@ -4,11 +4,13 @@
 #this calculates the ${property} for the remaining time in the simulation
 
 protein=1l2y
-gmx=gmx_164_pd241
+gmx=gmx_164
 nreps=27 #counting from 0
-e=1000000
 
-property=hbonds_pp
+#command line takes two arguments - one for each group
+group1=$1
+group2=$2
+property=hbonds_${group1}_${group2}
 folder=${property}_files
 
 for i in $(seq 0 $nreps); do
@@ -31,9 +33,9 @@ echo "Starting from new time: "$newTime
 #get property
 newFilename=${property}_${i}_new.xvg
 logfile=tmp_${property}_log_${i}.txt
-$gmx hbond -f ${protein}_sim_${i}.xtc -s TOPO_SIM/${protein}_sim_${i}.tpr -b ${newTime} -e $e -num ${newFilename} > ${logfile} 2>&1 << EOF
-1
-12
+$gmx hbond -f ${protein}_sim_${i}.xtc -s TOPO_SIM/${protein}_sim_${i}.tpr -n index -b ${newTime} -num ${newFilename} > ${logfile} 2>&1 << EOF
+${group1}
+${group2}
 EOF
 
 #cut out comments, concatenate, and replace
@@ -41,7 +43,7 @@ echo "Concatenating and replacing..."
 sed -E '/^#|^@/ d' $newFilename > tmp_${property}_${i}.xvg
 cat $filename tmp_${property}_${i}.xvg > tmp_${property}2_${i}.xvg
 cp tmp_${property}2_${i}.xvg $filename
-rm $newFilename tmp_${property}_${i}.xvg tmp_${property}2_${i}.xvg ${logfile} 
+rm $newFilename tmp_${property}_${i}.xvg tmp_${property}2_${i}.xvg #${logfile} 
 ) &
 
 done

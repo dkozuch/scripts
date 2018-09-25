@@ -21,10 +21,10 @@ bins=100
 #keeps us from recalculating stuff over and over which can be slow
 
 for i in $(seq 0 $nsims); do
-(
-t=${rep_temps[$i]}
-t=$(echo "$t" | bc) #some whitespace issues
-kt=$(echo "$t*0.008314" | bc)
+	( 
+	t=${rep_temps[$i]}
+	t=$(echo "$t" | bc) #some whitespace issues
+	kt=$(echo "$t*0.008314" | bc)
 
 	#determine number of strides to do
 	colvar_file=${property}_colvar/${property}_colvar.${i}
@@ -33,17 +33,17 @@ kt=$(echo "$t*0.008314" | bc)
 	echo "Number of lines in colvar file: "$lines
 	echo "Number of strides: "$nstrides
 
-	for j in $(seq 0 $nstrides); do
-	if [ ! -f ${folder}/reweighted_${property}.${i}.${j} ]; then
-	block=$(echo "${stride}*(${j}+1)" | bc)
-	echo $property $i $j $block
-	head -n $block ${colvar_file} > tmp_${property}_colvar.${i}.${j}
-	reweight.py -bsf $bsf -kt $kt -fpref fes_potential_files_stride/fes_potential_${i}.${j} -bin $bins -nf 1 -fcol 2 -colvar tmp_${property}_colvar.${i}.${j} -biascol 4 -rewcol 2 -outfile reweighted_${property}.${i}.${j} -v > tmp_log.txt 2>&1 
-	mv reweighted_${property}.${i}.${j} ${folder}/
-	rm tmp_${property}_colvar.${i}.${j}
-	fi
+	for j in $(seq 30 $nstrides); do
+		if [ ! -f ${folder}/reweighted_${property}.${i}.${j} ]; then
+			block=$(echo "${stride}*(${j}+1)" | bc)
+			echo $property $i $j $block
+			head -n $block ${colvar_file} > tmp_${property}_colvar.${i}.${j}
+			reweight.py -bsf $bsf -kt $kt -fpref fes_potential_files_stride/fes_potential_${i}.${j} -bin $bins -nf 1 -fcol 2 -colvar tmp_${property}_colvar.${i}.${j} -biascol 4 -rewcol 2 -outfile reweighted_${property}.${i}.${j} -v > tmp_reweight_${property}_log.txt 2>&1 
+			mv reweighted_${property}.${i}.${j} ${folder}/
+			#rm tmp_${property}_colvar.${i}.${j} tmp_reweight_${property}_log.txt
+		fi
 	done
-) &
+	) &
 
 done
 wait

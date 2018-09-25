@@ -1,4 +1,4 @@
-#!/tigress/dkozuch/programs/conda/bin/python
+#!/usr/bin/env python
 
 ########################################################
 # 
@@ -137,8 +137,7 @@ if not os.path.isfile(datafile):
         print "ERROR: file %s not found, check your inputs" % datafile
         exit(1)
 for i in range(numdat):
-    #fname = '%s%d.dat' % (fesfilename,i)
-    fname = '%s.dat' % (fesfilename) #remove i from filename, our script iterates
+    fname = '%s%d.dat' % (fesfilename,i)
     if not os.path.isfile(fname):
         print "ERROR: file %s not found, check your inputs" % fname
         exit(1)
@@ -162,8 +161,8 @@ for i in range(numdat):
 
     ########################################
     # set appropriate format for FES file names, NB: i starts from 0
-    #fname = '%s%d.dat' % (fesfilename,i)
-    fname = '%s.dat' % (fesfilename) #remove i from filename, our script iterates
+    fname = '%s%d.dat' % (fesfilename,i)
+#    fname = '%s.%d' % (fesfilename,i+1)
     ########################################
 
     data = np.loadtxt(fname)
@@ -198,13 +197,9 @@ numcolv = 0
 if not s_min:
     s_min = [ 9e99 ] * numrewt
     calc_smin = True
-else:
-	calc_smin = False
 if not s_max:
     s_max = [ -9e99 ] * numrewt
     calc_smax = True
-else:
-	calc_smax = False
 
 for row in colvar:
     numcolv += 1

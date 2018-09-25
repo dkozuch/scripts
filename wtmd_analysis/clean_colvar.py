@@ -12,7 +12,7 @@ os.system("mkdir colvar_clean")
 
 def clean_file(i):
 	print "Loading file..."
-	colvar = np.loadtxt("colvar."+str(i),comments=("#","@","!"))
+	colvar = np.loadtxt("colvar."+str(i),comments=("#","@","!","^@"))
 	length = len(colvar[:,0])
 	print "Length of file: "+str(length)
 
@@ -32,3 +32,5 @@ def clean_file(i):
 
 inputs = range(0,nsims)
 Parallel(n_jobs=nsims)(delayed(clean_file)(i) for i in inputs)
+
+#clean_file(12)

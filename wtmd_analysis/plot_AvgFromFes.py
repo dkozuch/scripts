@@ -1,6 +1,6 @@
 #!/tigress/dkozuch/programs/conda/bin/python
 
-print "Loading pacakges..."
+#print "Loading pacakges..."
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
@@ -11,7 +11,9 @@ parser.add_argument('-s','--sims',help="Number of simulations to consider (int)"
 parser.add_argument('-n','--name',help="Property to calculate avaerage for (string)",required=True,type=str)
 parser.add_argument('-b','--begin',help="Part to begin sampling (int)",required=True,type=int)
 parser.add_argument('-e','--end',help="Part to end sampling (int)",required=True,type=int)
-parser.add_argument('--visual',help="Whether to plot property as function of temperature (True/False)",required=False,default=False,type=bool)
+parser.add_argument('-t','--temperatures',help="Path to list of temperatures",required=True,type=str)
+parser.add_argument('--visual',help="Flag to plot property as function of temperature",action='store_true')
+parser.set_defaults(visual=False)
 
 parsed = parser.parse_args()
 print "Property selected: "+parsed.name
@@ -21,7 +23,8 @@ property = parsed.name
 v_begin = parsed.begin
 v_end = parsed.end
 nv = v_end - v_begin +1
-
+temps = np.loadtxt(parsed.temperatures)
+k = 0.008314
 
 def load_file(i,v):
 	folder = "reweighted_" + property + "_stride"
@@ -32,7 +35,7 @@ def load_file(i,v):
 	
 def avg_from_fes(i,v):
 	fes = load_file(i,v)
-	prob = np.exp(-fes[:,1]) #data should be in kT, doesn't matter because will normalize
+	prob = np.exp(-fes[:,1]/(k*temps[i]))
 	prob_norm = prob/np.sum(prob) #normalize probabilty
 	avg = np.sum(fes[:,0]*prob_norm)
 	return avg
@@ -45,13 +48,15 @@ for i in range(0, nsims):
 
 print "Processing data..."
 avg_mean = np.mean(avg_array,axis=1)
+avg_dev = np.std(avg_array,axis=1)
 temps = np.loadtxt("temps.txt")
-avg_temps = np.column_stack((temps,avg_mean))
+avg_temps = np.column_stack((temps,avg_mean,avg_dev))
 np.savetxt(property+"_avg_from_fes_v"+str(v_begin)+"t"+str(v_end)+".txt",avg_temps)
 
 if parsed.visual:
 	print "Plotting..."
-	plt.plot(avg_temps[:,0],avg_temps[:,1],'-o')
+	#plt.scatter(avg_temps[:,0],avg_temps[:,1],color='blue')
+	plt.errorbar(avg_temps[:,0],avg_temps[:,1],yerr=avg_temps[:,2],color='blue')
 	plt.xlabel("T (K)")
 	plt.ylabel(property)
 	plt.show()

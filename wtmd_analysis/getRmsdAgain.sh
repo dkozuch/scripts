@@ -4,7 +4,7 @@
 #this calculates the rmsd for the remaining time in the simulation
 
 protein=1l2y
-gmx=gmx_164_pd241
+gmx=gmx_164
 nsims=27 #counting from 0
 
 property=rmsd

@@ -1,24 +1,27 @@
 #!/tigress/dkozuch/programs/conda/bin/python
 
-print "Loading packages..."
+#print "Loading packages..."
 import numpy as np
 import matplotlib
 matplotlib.rcParams.update({'errorbar.capsize': 2}) #add caps to error bars
 import matplotlib.pyplot as plt
 import sys
-print "Packages loaded..."
+import os
+#print "Packages loaded..."
 
+visual = False
 nsims = 28
 property = "rmsd"
-cutoff = 0.3
+cutoff = float(sys.argv[1])
 r = 0.008314 #J/mol
 
-stride=100.0 #ns
-#takes user arguments for start and stop time in ns
-stride_start = int(np.floor(float(sys.argv[1])/stride))-1
-stride_end = int(np.floor(float(sys.argv[2])/stride))-1
+#file indexes
+b = int(sys.argv[2])
+e = int(sys.argv[3])
 
-print("Using files "+str(stride_start)+"-"+str(stride_end)+" for user time "+sys.argv[1]+"-"+sys.argv[2]+"ns") 
+dir = os.getcwd()
+print("Getting fraction folded for dir: "+dir)
+print("Using files "+str(b)+"-"+str(e))
 
 def prop_filename(i,v):
 	folder = "reweighted_" + property + "_stride"
@@ -53,7 +56,7 @@ def get_frac_curve(cutoff,v):
 
 #get average
 print "Getting average..."
-vList = range(stride_start,stride_end+1)
+vList = range(b,e+1)
 temps = np.loadtxt("temps.txt")
 curve_list = []
 for i in vList:
@@ -63,10 +66,10 @@ curve_list = np.array(curve_list)
 curve_mean = np.column_stack((temps,np.mean(curve_list,axis=0)))
 curve_mean_error = np.column_stack((temps,np.mean(curve_list,axis=0),np.std(curve_list,axis=0)))
 
-np.savetxt(property + "_fraction_folded_"+sys.argv[1]+"t"+sys.argv[2]+"ns.txt",curve_mean_error)
+np.savetxt(property + "_fraction_folded_"+str(b)+"t"+str(e)+".txt",curve_mean_error)
 
 # plot different fes versions
-if True:
+if visual:
 	print "Plotting..."
 	colors = plt.cm.Spectral(np.linspace(0,1,len(vList)))
 	count = 0
