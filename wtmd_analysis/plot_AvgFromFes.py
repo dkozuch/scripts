@@ -53,6 +53,10 @@ temps = np.loadtxt("temps.txt")
 avg_temps = np.column_stack((temps,avg_mean,avg_dev))
 np.savetxt(property+"_avg_from_fes_v"+str(v_begin)+"t"+str(v_end)+".txt",avg_temps)
 
+#save all data also
+avg_array_temps = np.column_stack((temps,avg_array))
+np.savetxt(property+"_temp_data_v"+str(v_begin)+"t"+str(v_end)+".txt",avg_array_temps)
+
 if parsed.visual:
 	print "Plotting..."
 	#plt.scatter(avg_temps[:,0],avg_temps[:,1],color='blue')

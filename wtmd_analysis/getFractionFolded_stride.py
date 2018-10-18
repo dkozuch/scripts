@@ -66,7 +66,10 @@ curve_list = np.array(curve_list)
 curve_mean = np.column_stack((temps,np.mean(curve_list,axis=0)))
 curve_mean_error = np.column_stack((temps,np.mean(curve_list,axis=0),np.std(curve_list,axis=0)))
 
-np.savetxt(property + "_fraction_folded_"+str(b)+"t"+str(e)+".txt",curve_mean_error)
+print curve_list.shape
+
+np.savetxt(property + "_fraction_folded_array_"+str(b)+"t"+str(e)+".txt",np.column_stack((temps,np.transpose(curve_list))))
+#np.savetxt(property + "_fraction_folded_"+str(b)+"t"+str(e)+".txt",curve_mean_error)
 
 # plot different fes versions
 if visual:

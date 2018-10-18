@@ -35,7 +35,5 @@ def clean_file(i):
 	np.savetxt("hills_clean/hills_clean."+str(i),hills_clean,fmt='%23s %22s %22d %22s %22d', 
 		   header="FIELDS time ene sigma_ene height biasf\nSET multivariate false",comments="#! ")
 
-#inputs = range(0,nsims)
-#Parallel(n_jobs=nsims)(delayed(clean_file)(i) for i in inputs)
-
-clean_file(9)
+inputs = range(0,nsims)
+Parallel(n_jobs=nsims)(delayed(clean_file)(i) for i in inputs)

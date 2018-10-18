@@ -20,7 +20,7 @@ for i in $(seq 0 $sims); do
 	done
 	wait
 
-rm tmp_fes_${property}_*
+#rm tmp_fes_${property}_*
 mv fes_${property}_*.dat ${folder}/
 
 
